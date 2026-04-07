@@ -3,11 +3,12 @@ import { useEffect, useRef } from 'react';
 import {useSelector, useDispatch} from 'react-redux'
 
 import ScatterplotD3 from './Scatterplot-d3';
-
-// TODO: import action methods from reducers
+import { setHoveredItemIndex, setSelectedItemIndexes } from '../../redux/ItemInteractionSlice';
 
 function ScatterplotContainer({xAttributeName, yAttributeName}){
     const visData = useSelector(state =>state.dataSet)
+    const selectedItemIndexes = useSelector(state =>state.itemInteraction.selectedItemIndexes)
+    const hoveredItemIndex = useSelector(state =>state.itemInteraction.hoveredItemIndex)
     const dispatch = useDispatch();
 
     // every time the component re-render
@@ -22,9 +23,9 @@ function ScatterplotContainer({xAttributeName, yAttributeName}){
         // fixed size
         // return {width:900, height:900};
         // getting size from parent item
-        let width;// = 800;
-        let height;// = 100;
-        if(divContainerRef.current!==undefined){
+        let width = 800;
+        let height = 600;
+        if(divContainerRef.current){
             width=divContainerRef.current.offsetWidth;
             // width = '100%';
             height=divContainerRef.current.offsetHeight;
@@ -52,21 +53,44 @@ function ScatterplotContainer({xAttributeName, yAttributeName}){
         console.log("ScatterplotContainer useEffect with dependency [scatterplotData, xAttribute, yAttribute, scatterplotControllerMethods], called each time scatterplotData changes...");
 
         const handleOnClick = function(itemData){
+            dispatch(setSelectedItemIndexes([itemData.index]));
         }
         const handleOnMouseEnter = function(itemData){
+            dispatch(setHoveredItemIndex(itemData.index));
         }
         const handleOnMouseLeave = function(){
+            dispatch(setHoveredItemIndex(null));
+        }
+        const handleOnBrush = function(itemsData){
+            dispatch(setSelectedItemIndexes(itemsData.map(itemData=>itemData.index)));
         }
 
         const controllerMethods={
             handleOnClick,
             handleOnMouseEnter,
-            handleOnMouseLeave
+            handleOnMouseLeave,
+            handleOnBrush
         }
 
         // get the current instance of scatterplotD3 from the Ref...
         // call renderScatterplot of ScatterplotD3...;
-    },[visData,dispatch]);// if dependencies, useEffect is called after each data update, in our case only visData changes.
+        const scatterplotD3 = scatterplotD3Ref.current;
+        if(scatterplotD3){
+            scatterplotD3.renderScatterplot(
+                visData,
+                xAttributeName,
+                yAttributeName,
+                controllerMethods
+            );
+        }
+    },[visData,dispatch,xAttributeName,yAttributeName]);// if dependencies, useEffect is called after each data update, in our case only visData changes.
+
+    useEffect(()=>{
+        const scatterplotD3 = scatterplotD3Ref.current;
+        if(scatterplotD3){
+            scatterplotD3.highlightSelectedItems(selectedItemIndexes, hoveredItemIndex);
+        }
+    },[selectedItemIndexes, hoveredItemIndex]);
 
     return(
         <div ref={divContainerRef} className="scatterplotDivContainer col">

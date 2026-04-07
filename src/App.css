@@ -1,20 +1,82 @@
 .App {
     text-align: center;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.appHeader{
+    padding: 10px 16px;
+    text-align: left;
+}
+.appHeader h1{
+    margin: 0 0 4px 0;
+    font-size: 20px;
+}
+.appHeader p{
+    margin: 0;
+    color: #555;
 }
 #MultiviewContainer{
-    height: 100%;
-}
-.row {
+    flex: 1;
+    min-height: 0;
+    padding: 0 10px 10px 10px;
     display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
+    flex-direction: column;
     gap: 10px;
 }
-.col{
-    flex-grow: 1; /* all .col elements have the same importance */
-    flex-basis: 0; /* do not use auto to avoid size depends on content*/
+.chartSection{
+    min-height: 0;
+}
+.scatterplotSection{
+    flex: 0 0 38%;
+}
+.hierarchySection{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+.hierarchyToolbar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 2px 8px 2px;
+    text-align: left;
+}
+.hierarchyToolbar h2{
+    margin: 0 0 2px 0;
+    font-size: 16px;
+}
+.hierarchyToolbar p{
+    margin: 0;
+    color: #666;
+    font-size: 12px;
+}
+.layoutButtons{
+    display: flex;
+    gap: 6px;
+}
+.layoutButtons button{
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    background: #f7f7f7;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+.layoutButtons button.active{
+    background: #2b8cbe;
+    color: #fff;
+    border-color: #2b8cbe;
+}
+.hierarchyGrid{
+    flex: 1;
+    min-height: 0;
+    display: block;
+}
+.hierarchyPrimary{
+    height: 100%;
+    min-height: 0;
 }
 
 /* .row:after {
